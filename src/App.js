@@ -1,23 +1,15 @@
-import logo from './logo.svg';
-import './App.css';
+// App.js
+import React from 'react';
+import SatelliteTracker from './SatelliteTracker';
 
 function App() {
+  const tleLine1 = '1 25544U 98067A   24023.07374280  .00024895  00000+0  44611-3 0  9998';
+  const tleLine2 = '2 25544  51.6425 319.3558 0004949 119.1990 352.4849 15.49780674435890';
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <SatelliteTracker tleLine1={tleLine1} tleLine2={tleLine2} />
     </div>
   );
 }

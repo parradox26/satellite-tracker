@@ -1,0 +1,23 @@
+.custom-marker {
+    position: relative;
+    text-align: center;
+  }
+  
+  .marker-text {
+    background-color: #fff;
+    padding: 5px 10px;
+    border-radius: 3px;
+    border: 1px solid #333;
+    font-size: 12px;
+    color: #333;
+  }
+  
+  .marker-arrow {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 10px solid #333;
+    margin: 0 auto;
+  }
+  
