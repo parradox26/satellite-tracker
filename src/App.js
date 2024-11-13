@@ -1,17 +1,36 @@
 // App.js
-import React from 'react';
+import React, {useState} from 'react';
 import SatelliteTracker from './SatelliteTracker';
+import {SatelliteDropdown, fetchTleData} from "./SatelliteDropdown";
 
 function App() {
-  const tleLine1 = '1 25544U 98067A   24023.07374280  .00024895  00000+0  44611-3 0  9998';
-  const tleLine2 = '2 25544  51.6425 319.3558 0004949 119.1990 352.4849 15.49780674435890';
+    const [tleData, setTleData] = useState(null);
+    const [selectedSatellite, setSelectedSatellite] = useState(null);
 
+    const onSelectSatellite = (satellite) => {
+        console.log(`inside onSelectSatellite: ${satellite}`)
+        setSelectedSatellite(satellite)
+        fetchTleData(satellite)
+            .then((data) => setTleData(data))
+            .catch((error) => console.error(error));
+    };
 
-  return (
-    <div>
-      <SatelliteTracker tleLine1={tleLine1} tleLine2={tleLine2} />
-    </div>
-  );
+    return (
+        <div>
+            <div style={{zIndex: 12000, position: 'relative'}}>
+                <SatelliteDropdown onSelectSatellite={onSelectSatellite}/>
+            </div>
+            {tleData && (
+                <div>
+                    <h2>{selectedSatellite.value + " : " + selectedSatellite.label}</h2>
+                    <div>
+                        <SatelliteTracker name={selectedSatellite.value} tleLine1={tleData[0]} tleLine2={tleData[1]}/>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 }
+
 
 export default App;
