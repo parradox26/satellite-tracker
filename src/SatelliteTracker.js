@@ -31,7 +31,7 @@ const SatelliteTracker = ({name, tleLine1, tleLine2}) => {
             const positionAndVelocity = satellite.propagate(satrec, new Date());
             const positionEci = positionAndVelocity.position;
             const gmst = satellite.gstime(new Date());
-
+            if (typeof positionEci === 'boolean') return
             const positionGd = satellite.eciToGeodetic(positionEci, gmst);
             const longitude = satellite.degreesLong(positionGd.longitude);
             const latitude = satellite.degreesLat(positionGd.latitude);
