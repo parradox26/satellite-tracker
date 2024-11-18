@@ -1,53 +1,55 @@
 // SatelliteOrbitPath.js
-import React, { useState, useEffect } from 'react';
-import { Polyline } from 'react-leaflet';
+import React, {useState, useEffect} from 'react';
+import {Polyline} from 'react-leaflet';
 import * as satellite from 'satellite.js';
+import {v4 as uuid} from 'uuid';
 
-const SatelliteOrbitPath = ({ tleLine1, tleLine2 }) => {
-  const [orbitPaths, setOrbitPaths] = useState([]);
+const SatelliteOrbitPath = ({tleLine1, tleLine2}) => {
+    const [orbitPaths, setOrbitPaths] = useState([]);
 
-  useEffect(() => {
-    const satrec = satellite.twoline2satrec(tleLine1, tleLine2);
+    useEffect(() => {
+        const satrec = satellite.twoline2satrec(tleLine1, tleLine2);
 
-    const generateOrbitPaths = () => {
-      let paths = [];
-      let currentPath = [];
-      let previousLongitude = null;
+        const generateOrbitPaths = () => {
+            let paths = [];
+            let currentPath = [];
+            let previousLongitude = null;
 
-      for (let i = 0; i <= 90; i++) {
-        const time = new Date();
-        time.setMinutes(time.getMinutes() + i * 2); // 2-minute intervals
-        const positionAndVelocity = satellite.propagate(satrec, time);
-        const positionEci = positionAndVelocity.position;
-        const gmst = satellite.gstime(time);
-        const positionGd = satellite.eciToGeodetic(positionEci, gmst);
-        const longitude = satellite.degreesLong(positionGd.longitude);
-        const latitude = satellite.degreesLat(positionGd.latitude);
+            for (let i = 0; i <= 90; i++) {
+                const time = new Date();
+                time.setMinutes(time.getMinutes() + i * 2); // 2-minute intervals
+                const positionAndVelocity = satellite.propagate(satrec, time);
+                const positionEci = positionAndVelocity.position;
+                const gmst = satellite.gstime(time);
+                if (typeof positionEci == 'boolean') continue
+                const positionGd = satellite.eciToGeodetic(positionEci, gmst);
+                const longitude = satellite.degreesLong(positionGd.longitude);
+                const latitude = satellite.degreesLat(positionGd.latitude);
 
-        // Check for crossing the antimeridian
-        if (previousLongitude !== null && Math.abs(longitude - previousLongitude) > 180) {
-          paths.push(currentPath);
-          currentPath = [];
-        }
+                // Check for crossing the anti meridian
+                if (previousLongitude !== null && Math.abs(longitude - previousLongitude) > 180) {
+                    paths.push(currentPath);
+                    currentPath = [];
+                }
 
-        currentPath.push([latitude, longitude]);
-        previousLongitude = longitude;
-      }
+                currentPath.push([latitude, longitude]);
+                previousLongitude = longitude;
+            }
 
-      paths.push(currentPath); // Add the last path
-      return paths;
-    };
+            paths.push(currentPath); // Add the last path
+            return paths;
+        };
 
-    setOrbitPaths(generateOrbitPaths());
-  }, [tleLine1, tleLine2]);
+        setOrbitPaths(generateOrbitPaths());
+    }, [tleLine1, tleLine2]);
 
-  return (
-    <>
-      {orbitPaths.map((path, index) => (
-        <Polyline key={index} positions={path} color="red" />
-      ))}
-    </>
-  );
+    return (
+        <>
+            {orbitPaths.map((path) => (
+                <Polyline key={uuid()} positions={path} color="red"/>
+            ))}
+        </>
+    );
 };
 
 export default SatelliteOrbitPath;
